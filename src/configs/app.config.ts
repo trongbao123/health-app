@@ -1,6 +1,14 @@
 const isServer = typeof window === "undefined";
 const isDev = process.env.NODE_ENV === "development";
 
+function getOrigin() {
+  if (typeof window !== "undefined") {
+    return window.location.origin;
+  } else {
+    return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  }
+}
+
 export const AppConfig = {
   env: process.env.NODE_ENV,
   isDev,
@@ -8,8 +16,7 @@ export const AppConfig = {
   isServer,
   isClient: !isServer,
 
-  apiBaseUrl:
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1",
+  apiBaseUrl: `${getOrigin()}/api/v1`,
 
   featureFlags: {
     enableAnalytics: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === "true",
