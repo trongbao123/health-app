@@ -6,12 +6,9 @@ import { MealService } from "@/services/api/meal/meal.service";
 
 MealService.init();
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(req: NextRequest) {
   try {
-    const id = Number.parseInt(params.id);
+    const id = extractId(req);
     const meal = MealService.findById(id);
 
     if (!meal) {
@@ -28,12 +25,9 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequest) {
   try {
-    const id = Number.parseInt(params.id);
+    const id = extractId(req);
     const update = await req.json();
     const updatedMeal = MealService.updateById(id, update);
 
@@ -51,12 +45,9 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest) {
   try {
-    const id = Number.parseInt(params.id);
+    const id = extractId(req);
     const deleted = MealService.deleteById(id);
 
     if (!deleted) {
@@ -71,4 +62,10 @@ export async function DELETE(
       HttpStatus.INTERNAL_SERVER_ERROR
     );
   }
+}
+
+function extractId(req: NextRequest): number {
+  const id = req.nextUrl.pathname.split("/").pop();
+  if (!id) throw new Error("ID not found in URL");
+  return Number(id);
 }
